@@ -54,7 +54,7 @@ And every woman deserves to feel powerful.
           <img
             src={coachImg}
             alt="Fitness Coach"
-className="w-full aspect-[4/3] object-cover"
+className="w-full aspect-[4/3] object-cover rounded-4xl"
 
           />
 

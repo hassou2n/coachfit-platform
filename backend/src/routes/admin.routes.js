@@ -1,9 +1,10 @@
 import express from "express";
+import streamifier from "streamifier";
 import Course from "../models/Course.js";
 import Code from "../models/Code.js";
-
 import { upload } from "../middlewares/upload.js";
 import { asyncHandler } from "../middlewares/error.middleware.js";
+import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
 
@@ -91,19 +92,33 @@ router.put(
 
 
 // 🔥 UPLOAD COURSE IMAGE (Cloudinary)
+
 router.post(
   "/courses/upload-image",
   upload.single("image"),
-  asyncHandler(async (req, res) =>  {
+  asyncHandler(async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "No image uploaded" });
     }
 
-    res.json({
-      url: req.file.path // Cloudinary URL
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "courses",
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+
+      streamifier.createReadStream(req.file.buffer).pipe(stream);
     });
-  }
-));
+
+    res.json({ url: result.secure_url });
+  })
+);
+
 
 
 /* =========================
