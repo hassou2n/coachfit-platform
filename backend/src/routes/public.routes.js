@@ -1,5 +1,6 @@
 import express from "express";
-import { coursesDB, codesDB } from "../config/couch.js";
+import Course from "../models/Course.js";
+import Code from "../models/Code.js";
 import { asyncHandler } from "../middlewares/error.middleware.js";
 
 const router = express.Router();
@@ -7,81 +8,83 @@ const router = express.Router();
 /* =========================
    COURSES (PUBLIC)
 ========================= */
-router.get("/courses", asyncHandler(async (req, res) =>{
-  const result = await coursesDB.list({ include_docs: true });
-  res.json(result.rows.map(r => r.doc));
-}));
+router.get(
+  "/courses",
+  asyncHandler(async (req, res) => {
+    const courses = await Course.find().sort({ createdAt: -1 });
+    res.json(courses);
+  })
+);
 
 /* =========================
    ACTIVATE CODE
 ========================= */
-router.post("/activate", asyncHandler(async (req, res) => {
-  const { code } = req.body;
+router.post(
+  "/activate",
+  asyncHandler(async (req, res) => {
+    const { code } = req.body;
 
-  const result = await codesDB.find({ selector: { code } });
-  if (!result.docs.length) {
-    return res.status(400).json({ message: "Invalid code" });
-  }
+    const doc = await Code.findOne({ code });
 
-  const doc = result.docs[0];
+    if (!doc) {
+      return res.status(400).json({ message: "Invalid code" });
+    }
 
-  // ❌ لا تمنع التفعيل بسبب used
-  // لأن الاشتراك يعتمد على الصلاحية لا على used
-  const updatedDoc = {
-    ...doc,
-    used: true,
-    activatedAt: doc.activatedAt || new Date().toISOString()
-  };
+    // ❌ لا نمنع التفعيل بسبب used
+    doc.used = true;
 
-  await codesDB.insert(updatedDoc);
+    if (!doc.activatedAt) {
+      doc.activatedAt = new Date();
+    }
 
-  res.json({
-    code: doc.code,
-    subscriberName: doc.subscriberName,
-    courses: doc.allowedCourses || [],
-    nutritionPlan: doc.nutritionPlan || null
-  });
-}));
+    await doc.save();
+
+    res.json({
+      code: doc.code,
+      subscriberName: doc.subscriberName,
+      courses: doc.allowedCourses || [],
+      nutritionPlan: doc.nutritionPlan || null,
+    });
+  })
+);
 
 /* =========================
    CHECK SUBSCRIPTION (🔥 الأهم)
 ========================= */
-router.post("/check-subscription", asyncHandler(async (req, res) => {
-  const { code } = req.body;
+router.post(
+  "/check-subscription",
+  asyncHandler(async (req, res) => {
+    const { code } = req.body;
 
-  const result = await codesDB.find({
-    selector: { code }
-  });
+    const doc = await Code.findOne({ code });
 
-  // الكود محذوف
-  if (!result.docs.length) {
-    return res.json({ valid: false });
-  }
-
-  const doc = result.docs[0];
-
-  // حساب الانتهاء الحقيقي
-  const startDate = new Date(doc.createdAt);
-  const totalDays =
-    Number(doc.expiresInDays || 0) +
-    Number(doc.extraDays || 0);
-
-  startDate.setDate(startDate.getDate() + totalDays);
-
-  if (startDate < new Date()) {
-    return res.json({ valid: false });
-  }
-
-  // 🔥 رجّع الاشتراك كامل ومُحدّث
-  res.json({
-    valid: true,
-    subscription: {
-      code: doc.code,
-      subscriberName: doc.subscriberName,
-      courses: doc.allowedCourses || [],
-      nutritionPlan: doc.nutritionPlan || null
+    // الكود محذوف
+    if (!doc) {
+      return res.json({ valid: false });
     }
-  });
-}));
+
+    // حساب الانتهاء الحقيقي
+    const startDate = new Date(doc.createdAt);
+    const totalDays =
+      Number(doc.expiresInDays || 0) +
+      Number(doc.extraDays || 0);
+
+    startDate.setDate(startDate.getDate() + totalDays);
+
+    if (startDate < new Date()) {
+      return res.json({ valid: false });
+    }
+
+    res.json({
+      valid: true,
+      subscription: {
+        code: doc.code,
+        subscriberName: doc.subscriberName,
+        courses: doc.allowedCourses || [],
+        nutritionPlan: doc.nutritionPlan || null,
+      },
+    });
+  })
+);
 
 export default router;

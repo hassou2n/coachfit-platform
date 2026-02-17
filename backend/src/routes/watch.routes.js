@@ -1,21 +1,22 @@
 import express from "express";
-import { watchDB } from "../config/couch.js";
+import Watch from "../models/Watch.js";
 import { asyncHandler } from "../middlewares/error.middleware.js";
-
-import { v4 as uuid } from "uuid";
 
 const router = express.Router();
 
-router.post("/", asyncHandler(async (req, res) => {
-  const doc = {
-    _id: uuid(),
-    code: req.body.code,
-    videoId: req.body.videoId,
-    watchedAt: new Date().toISOString()
-  };
+router.post(
+  "/",
+  asyncHandler(async (req, res) => {
+    const { code, videoId } = req.body;
 
-  await watchDB.insert(doc);
-  res.json({ ok: true });
-}));
+    await Watch.create({
+      code,
+      videoId,
+      watchedAt: new Date(),
+    });
+
+    res.json({ ok: true });
+  })
+);
 
 export default router;
