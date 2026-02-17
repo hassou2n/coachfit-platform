@@ -14,7 +14,7 @@ export default function Navbar() {
           to="/"
           className="text-2xl font-semibold tracking-wide text-[var(--accent)]"
         >
-          CoachFit
+          FightFit
         </NavLink>
 
         {/* Desktop Navigation (لم نغيره أبداً) */}

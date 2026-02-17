@@ -9,7 +9,7 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <h3 className="text-2xl font-semibold text-[var(--accent)] mb-4">
-            CoachFit
+            FightFit
           </h3>
 
           <p className="text-neutral-400 text-sm leading-relaxed max-w-xs">
@@ -66,7 +66,7 @@ export default function Footer() {
 
       {/* Bottom */}
       <div className="border-t border-white/5 py-6 text-center text-xs text-neutral-500">
-        © 2026 CoachFit — All Rights Reserved.
+        © 2026 FightFit — All Rights Reserved.
       </div>
 
     </footer>

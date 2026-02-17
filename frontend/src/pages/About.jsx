@@ -18,15 +18,18 @@ export default function About() {
 
 
           <p className="text-neutral-300 text-lg leading-relaxed mb-6">
-            I help women build strength, confidence, and a powerful
-            relationship with their bodies through structured,
-            sustainable training.
+          Hi, I’m <span className="font-accent text-2xl  text-[var(--accent)]">Aliona</span>  — Ukrainian fitness trainer and founder of FightFit.<br/>
+
+I created FightFit to help women become stronger — physically and mentally — no matter the circumstances.
           </p>
 
           <p className="text-neutral-400 leading-relaxed mb-10">
-            My coaching approach combines smart programming,
-            realistic nutrition, and mindset development to create
-            long-term transformation — not quick fixes.
+          My programs combine discipline, structured strength training, and supportive coaching to help women transform their bodies and regain confidence.<br/>
+
+I work with clients online worldwide and support Ukrainian women who want real results and professional guidance.<br/>
+
+Strength is power.<br/>
+And every woman deserves to feel powerful.
           </p>
 
           <div className="flex gap-6">

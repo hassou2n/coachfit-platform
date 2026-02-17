@@ -50,7 +50,7 @@ const program = params.get("program");
           </p>
 
           <a
-            href="mailto:your@email.com"
+            href="mailto:contact@fightfit.com"
             className="inline-block px-8 py-3 bg-[var(--accent)] text-black rounded-full hover:opacity-90 transition hover:shadow-[0_0_30px_rgba(139,14,22,0.5)]"
           >
             Send Email
@@ -67,7 +67,7 @@ const program = params.get("program");
           </p>
 
           <a
-            href="https://t.me/yourusername"
+            href="https://t.me/coach_aliona"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block px-8 py-3 bg-[var(--accent)] text-black rounded-full hover:opacity-90 transition hover:shadow-[0_0_30px_rgba(139,14,22,0.5)]"
@@ -86,7 +86,7 @@ const program = params.get("program");
           </p>
 
           <a
-            href="https://wa.me/1234567890"
+            href="https://wa.me/+4571661351"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block px-8 py-3 bg-[var(--accent)] text-black rounded-full hover:opacity-90 transition hover:shadow-[0_0_30px_rgba(139,14,22,0.5)]"
